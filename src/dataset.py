@@ -1,28 +1,38 @@
 import os
-from torch.utils.data import Dataset
 from PIL import Image
-import numpy as np
+from torch.utils.data import Dataset
+import torchvision.transforms as T
 import torch
 
-
 class MRISegDataset(Dataset):
-    def __init__(self, img_dir, mask_dir=None):
-        self.img_files = sorted(os.listdir(img_dir))
+    def __init__(self, img_dir, mask_dir):
         self.img_dir = img_dir
         self.mask_dir = mask_dir
+        self.images = sorted(os.listdir(img_dir))
+
+        self.transform = T.Compose([
+            T.ToTensor(),
+        ])
 
     def __len__(self):
-        return len(self.img_files)
+        return len(self.images)
 
     def __getitem__(self, idx):
-        img_path = os.path.join(self.img_dir, self.img_files[idx])
-        img = np.array(Image.open(img_path), dtype=np.float32) / 255.0
-        img = torch.from_numpy(img).unsqueeze(0)  # [1,H,W]
+        img_path = os.path.join(self.img_dir, self.images[idx])
+        mask_path = os.path.join(self.mask_dir, self.images[idx])
 
-        if self.mask_dir:
-            mask_path = os.path.join(self.mask_dir, self.img_files[idx])
-            mask = np.array(Image.open(mask_path), dtype=np.float32) / 255.0
-            mask = torch.from_numpy(mask).unsqueeze(0)
-        else:
-            mask = torch.zeros_like(img)
-        return img, mask
+        image = Image.open(img_path).convert("L")
+        mask = Image.open(mask_path).convert("L")
+
+        image = self.transform(image)
+        mask = self.transform(mask)
+
+        return image, mask
+
+def preprocess_image(img_path):
+    transform = T.Compose([
+        T.Grayscale(),  # Ensure single channel
+        T.ToTensor(),
+    ])
+    image = Image.open(img_path).convert("L")
+    return transform(image)
