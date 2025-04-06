@@ -44,4 +44,4 @@ for fname in sorted(os.listdir(cases_ts_dir)):
         base = fname.replace('.nii.gz','').replace('.nii','') + f'_{z:03d}.png'
         Image.fromarray(img_vol[:,:,z]).save(os.path.join(test_img_out, base))
 
-print("✅ Slices generated and saved in data/train/images, data/train/masks, and data/test/images")
+print("Slices generated and saved in data/train/images, data/train/masks, and data/test/images")

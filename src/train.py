@@ -31,7 +31,7 @@ criterion = nn.BCEWithLogitsLoss()
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
 # Training Loop
-print("\n🚀 Starting training...")
+print("\nStarting training...")
 
 for epoch in range(num_epochs):
     model.train()
@@ -64,8 +64,8 @@ for epoch in range(num_epochs):
 
 # Save the model
 torch.save(model.state_dict(), os.path.join(output_dir, 'best_model.pth'))
-print(f'✅ Training complete. Model saved to {output_dir}/best_model.pth')
+print(f'Training complete. Model saved to {output_dir}/best_model.pth')
 
 # Optional: Predict after training
 save_predictions(model, test_img_dir, output_dir, device)
-print(f'✅ Inference complete. Predictions saved to {output_dir}/')
+print(f'Inference complete. Predictions saved to {output_dir}/')
